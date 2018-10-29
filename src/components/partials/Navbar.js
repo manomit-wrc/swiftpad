@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { insertAct, getStoryContent, insertChapter, insertScene } from '../../actions/auth';
 import _ from 'lodash';
+import $ from 'jquery';
 
 var placeholder = document.createElement("li");
 placeholder.className = "placeholder";
@@ -16,6 +17,7 @@ class Main extends Component {
       
       this.addAct = this.addAct.bind(this);
       
+      this.chapterSortable = React.createRef();
       
       
       this.state = {
@@ -89,6 +91,20 @@ class Main extends Component {
         }
 
       }
+    }
+
+    componentDidMount() {
+      // this.chapterSortable.current.sortable({
+      //   connectWith: ".chapter-sortable",
+      //   stack: '.chapter-sortable ul li'
+      // }).disableSelection();
+
+      $(document).ready(function() {
+        $( ".chapter-sortable" ).sortable({
+          connectWith: ".chapter-sortable"
+        }).disableSelection();
+        alert("Hello");
+      });
     }
 
     toggleParentClass() {
@@ -539,7 +555,7 @@ class Main extends Component {
                       </li>
                     </ul>
                   </div>
-                  <ul onDragOver={this.dragOver.bind(this)} id="parent" className="dropdown-menu" style={{display: this.state.ul_parent ? 'block': 'none'}}>
+                  <ul  id="parent" className="dropdown-menu" style={{display: this.state.ul_parent ? 'block': 'none'}}>
                     
                     
                     {this.state.actArr.map((act, index) => {
@@ -547,25 +563,19 @@ class Main extends Component {
                             <li className="dropdown act-dropdown droppable-act parent"
                                 data-id={index} 
                                 key={index}
-                                draggable='true'
-                                onDragEnd={this.dragEnd.bind(this)}
-                                onDragStart={this.dragStart.bind(this)}
+                                
                                 > 
                                   <a id={`act-${index + 1}`} onClick={(e)=>this.addChapter(e, act.name, index, act.id)} className="dropdown-toggle" role="button" aria-haspopup="false" aria-expanded="false">
                                     <i id={`i-${index + 1}`} onClick={(e)=>this.addAnotherChapter(e, act.name, index, act.id)} className="fa fa-angle-right" aria-hidden="true"></i>{act.name}
                                   </a>
                                   <span className="add act-add" onClick={this.addAct}>+ ACT</span>
-                                  <ul className="dropdown-menu chapter-sortable ui-sortable ul-chapter"
-                                    onDragOver={this.dragChapterOver.bind(this)}
-                                  >
+                                  <ul className="dropdown-menu chapter-sortable" ref={this.chapterSortable} >
                                     {act.chapter.map((chapter, ChapterIndex) => {
                                       return (
                                         <li className="dropdown" 
                                         data-id={ChapterIndex}
                                         key={ChapterIndex}
-                                        draggable='true'
-                                        onDragEnd={this.dragChapterEnd.bind(this)}
-                                        onDragStart={this.dragChapterStart.bind(this)}
+                                       
                                         >
                                           <ul className="option-heading">
                                           <li>{index + 1}.{ChapterIndex + 1}</li>
@@ -579,7 +589,7 @@ class Main extends Component {
                                           <a id={chapter.id} onClick={(e) => this.addScene(e, act.name, chapter.id, chapter.new_chapter_id)} className="dropdown-toggle"  role="button" aria-haspopup="true" aria-expanded="false">
                                           <i id={chapter.id} className="fa fa-angle-right" aria-hidden="true"></i>{chapter.name}</a>
                                           <span className="add chapter-add" onClick={(e)=>this.addChildChapter(e, act.name, index, act.id)}>+ CHAPTER</span>
-                                          <ul className="dropdown-menu sceen-sortable ui-sortable">
+                                          <ul className="dropdown-menu sceen-sortable">
                                             {chapter.scenes.map((scene, SceneIndex) => {
                                               return (
                                                 <li key={SceneIndex}>

@@ -248,6 +248,8 @@ $(function(){
 		}).disableSelection();
 	}
 
+	
+
 // Label dropdown
 
 $(".right-modal .tag.label").click(function() {
